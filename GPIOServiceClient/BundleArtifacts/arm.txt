@@ -1,0 +1,2 @@
+MainPackage=C:\Users\Willi\Documents\GitHubProjects\GPIOServices\ARM\Release\GPIOServiceClient\GPIOServiceClient_1.0.0.0_ARM.appx
+SymbolPackage=C:\Users\Willi\Documents\GitHubProjects\GPIOServices\AppPackages\GPIOServiceClient\GPIOServiceClient_1.0.0.0_Test\GPIOServiceClient_1.0.0.0_ARM.appxsym

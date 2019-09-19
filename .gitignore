@@ -3,3 +3,18 @@
 ################################################################################
 
 /.vs/GPIOServices/v15
+/AppPackages
+/ARM
+/BME280Service/.vs/BME280Service/v15
+/BME280Service/ARM
+/BME280Service/x64/Release
+/Debug
+/GPIOService/ARM
+/GPIOService/Debug
+/GPIOServiceClient/ARM
+/GPIOServiceClient/Debug
+/GPIOServiceListener/ARM
+/GPIOServiceProvider/ARM
+/GPIOServiceProvider/Debug
+/GPIOShutDownMangaging/ARM
+/packages/Microsoft.IoT.Lightning.1.1.0
