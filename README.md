@@ -1,8 +1,8 @@
-"# GPIOServices"  subdiveded intto:
+# GPIOServices"  subdiveded intto:
 - BME280Service
 - GPIOService
 
-GPIOService
+# GPIOService
 
 GPIOService is a Background Application for handling GPIO pins for the Raspberry Pi 3B(+).The service runs in the background and is started when the Pi is started using a schtasks command and runs for the entire runtime. Communication with foreground apps or other background apps takes place via a socket connection (StreamSocket), which runs permanently.
 The data interface is implemented using simple text commands.
@@ -16,7 +16,7 @@ For example:
 // "HC_SR04.5, TrigPin = 20;" HCR-SR04-Senosre for reading input signal on echon-Pin 5 and send Trigger out to pin 20
 // "BME280.0x76 = 0;" BME280 sensor command for reading BME280-Sensor for ID 0x76
 
-for using on client-side:
+# using on client-side:
 
 	GPIOHCSR04* pGPIOHCSR04 = new GPIOHCSR04(m_pGPIOEventPackageQueue, 12, 23, 0); // Echo-input = 12, Trigger = 20
 	pGPIOHCSR04->setActivateOutputProcessing(true); // set activate output processing
@@ -41,7 +41,7 @@ for using on client-side:
 	Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromSendData(state);
 	m_pServiceListener->SendDataToClients(buf); // sends command-data like "GPO.1 = 1;HC_SR04.5, TrigPin = 20;PWM.5 = 0.1, Freq=50;" to GPIO-Service (Server side)
 
-LoopBackExempt-Handling for running GPIOService and any GPIOClient on same machine
+# LoopBackExempt-Handling for running GPIOService and any GPIOClient on same machine
 Loopback for GPIOService (Server-side):
 
 schtasks /create /tn "GPIOServiceLoopBack" /f /ru system /xml "c:\PSSCRIPTS\GPIOServiceLoopBack.xml" 
