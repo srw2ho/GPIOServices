@@ -17,16 +17,17 @@ For example:
 // "BME280.0x76 = 0;" BME280 sensor command for reading BME280-Sensor for ID 0x76
 
 for using on client-side:
+
 	GPIOHCSR04* pGPIOHCSR04 = new GPIOHCSR04(m_pGPIOEventPackageQueue, 12, 23, 0); // Echo-input = 12, Trigger = 20
 	pGPIOHCSR04->setActivateOutputProcessing(true); // set activate output processing
 	m_GPIOClientInOut->addGPIOPin(pGPIOHCSR04);
 
 	
-  pOutput = new GPIOOutputPin(m_pGPIOEventPackageQueue, 27, 1); // waiting for changing input on Pin 27
+  	pOutput = new GPIOOutputPin(m_pGPIOEventPackageQueue, 27, 1); // waiting for changing input on Pin 27
 	pOutput->setActivateOutputProcessing(true);
 	m_GPIOClientInOut->addGPIOPin(pOutput);
   
-  pOutput = new GPIOOutputPin(m_pGPIOEventPackageQueue, 21, 1); // 
+  	pOutput = new GPIOOutputPin(m_pGPIOEventPackageQueue, 21, 1); // 
 	pOutput->setActivateOutputProcessing(true);
 	m_GPIOClientInOut->addGPIOPin(pOutput);
   
@@ -34,60 +35,11 @@ for using on client-side:
 	pBME280Sensor->setActivateOutputProcessing(false); //
 	m_GPIOClientInOut->addGPIOPin(pBME280Sensor);
   
-  // Send all commands to Server-Side for processing commands
-  Platform::String^ state = m_GPIOClientInOut->GetGPIClientSendState(); // Status of all outpus
+ 	// Send all commands to Server-Side for processing commands
+	Platform::String^ state = m_GPIOClientInOut->GetGPIClientSendState(); // Status of all outpus
 
 	Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromSendData(state);
 	m_pServiceListener->SendDataToClients(buf); // sends command-data like "GPO.1 = 1;HC_SR04.5, TrigPin = 20;PWM.5 = 0.1, Freq=50;" to GPIO-Service (Server side)
-  
-  Arrive information from GPIOService can be received and process as followd
-  Concurrency::task<void> StartupTask::doProcessReadValues()
-{
-	auto token = m_pCancelTaskToken->get_token();
-	auto tsk = create_task([this, token]() -> void
-	{
-		bool dowhile = true;
-		DWORD waitTime = 500; // 500 msec waiting
-c:\PSSCRIPTS\ on devide		while (dowhile) {
-			try {
-				GPIOEventPackage* pPacket = nullptr;
-				m_pGPIOEventPackageQueue->waitForPacket(&pPacket, waitTime); // incommming GPIOService data will inserted into Processing Queue
-				if (pPacket != nullptr)
-				{
-					GPIOPin* pGPIOPin = (GPIOPin*)  pPacket->getAdditional(); // Pin-Object for processing data
-					if (pGPIOPin != nullptr)
-					{
-  	        if (pGPIOPin->getPinNumber() == 24) {
-		          double		value = pGPIOPin->getPinValue() ? 1 : 0; // Relais low aktiv
-              // ... doing
-           }
-
-					}
-
-					delete pPacket;
-				}
-
-				if (token.is_canceled()) {
-					cancel_current_task();
-				}
-
-			}
-			catch (task_canceled&)c:\PSSCRIPTS\ on devide
-			{
-				dowhile = false;
-
-			}
-			catch (Exception^ exception)
-			{
-				dowhile = false;
-			}
-
-		}
-
-	}, token);
-
-	return tsk;
-}
 
 LoopBackExempt-Handling for running GPIOService and any GPIOClient on same machine
 Loopback for GPIOService (Server-side)
@@ -99,4 +51,4 @@ file "GPIOServiceLoopBack.xml" is also checked in. This file must be copied into
 
 CheckNetIsolation.exe LoopbackExempt -is -n=GPIOService-uwp_cctb7d6fhpv4a
 
-Please see code GPIOservice and for Client-Using "SharedSources/GPIOServiceConnector" or better "GPIODashboard"
+Please insall GPIOservice for Server side and for Client-Using take a look on "SharedSources/GPIOServiceConnector" or better "GPIODashboard"
