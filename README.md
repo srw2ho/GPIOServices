@@ -42,13 +42,14 @@ for using on client-side:
 	m_pServiceListener->SendDataToClients(buf); // sends command-data like "GPO.1 = 1;HC_SR04.5, TrigPin = 20;PWM.5 = 0.1, Freq=50;" to GPIO-Service (Server side)
 
 LoopBackExempt-Handling for running GPIOService and any GPIOClient on same machine
-Loopback for GPIOService (Server-side)
+Loopback for GPIOService (Server-side):
+
 schtasks /create /tn "GPIOServiceLoopBack" /f /ru system /xml "c:\PSSCRIPTS\GPIOServiceLoopBack.xml" 
 
 file "GPIOServiceLoopBack.xml" is also checked in. This file must be copied into folder "c:\PSSCRIPTS\" on devide
 
-// LoopBack for Service for GPIPService (GPIOService-uwp_cctb7d6fhpv4a as family-Package-id)
+LoopBack for Service on Client side (GPIOServiceClient-uwp_cctb7d6fhpv4a as family-Package-id)
 
-CheckNetIsolation.exe LoopbackExempt -is -n=GPIOService-uwp_cctb7d6fhpv4a
+CheckNetIsolation.exe LoopbackExempt -a -n=GPIOServiceClient-uwp_cctb7d6fhpv4a
 
 Please insall GPIOservice for Server side and for Client-Using take a look on "SharedSources/GPIOServiceConnector" or better "GPIODashboard"
