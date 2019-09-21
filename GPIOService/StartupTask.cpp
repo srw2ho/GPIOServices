@@ -34,7 +34,7 @@ namespace GPIOService
 	
 		m_serviceDeferral = nullptr;
 		m_pGPIOInOut = nullptr;
-		m_connection = nullptr;
+		//m_connection = nullptr;
 		m_timer = nullptr;
 		m_pCancelTaskToken = new concurrency::cancellation_token_source();
 
@@ -65,7 +65,7 @@ namespace GPIOService
 		bool bInit = m_pGPIOInOut->InitGPIO(); // Init
 
 		if (bInit) {
-
+			/*
 
 			if (appServiceTrigger != nullptr) {
 				if (String::operator==(appServiceTrigger->Name, L"GPIOService"))
@@ -79,6 +79,7 @@ namespace GPIOService
 				}
 
 			}
+			*/
 
 
 			m_pServiceListener->CreateListenerServerAsync(3005);
@@ -152,12 +153,12 @@ namespace GPIOService
 			}
 
 		
-
+			/* not used
 			if (m_connection != nullptr) {
 				delete m_connection;
 				m_connection = nullptr;
 			}
-
+			*/
 			if (m_pCancelTaskToken != nullptr) {
 
 				delete m_pCancelTaskToken;
@@ -213,10 +214,9 @@ namespace GPIOService
 
 	}
 
-
+	/*
 	void StartupTask::OnRequestReceived(AppServiceConnection^ sender, AppServiceRequestReceivedEventArgs^ args)
 	{
-		// Get a deferral so we can use an awaitable API to respond to the message
 		auto messageDeferral = args->GetDeferral();
 
 		auto input = args->Request->Message;
@@ -342,6 +342,7 @@ namespace GPIOService
 		}
 
 	}
+	*/
 
 
 

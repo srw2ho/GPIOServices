@@ -19,7 +19,7 @@ namespace GPIOService
     {
 	private:
 		Platform::Agile<Windows::ApplicationModel::Background::BackgroundTaskDeferral^> m_serviceDeferral;
-		Windows::ApplicationModel::AppService::AppServiceConnection^ m_connection;
+	//	Windows::ApplicationModel::AppService::AppServiceConnection^ m_connection;
 		GPIODriver::GPIOInOut^ m_pGPIOInOut;
 
 		StreamSocketComm::SocketListener ^m_pServiceListener;
