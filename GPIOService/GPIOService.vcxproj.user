@@ -10,7 +10,7 @@
     <DebuggerLaunchApplication>false</DebuggerLaunchApplication>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <DebuggerMachineName>WilliRaspiPlus</DebuggerMachineName>
+    <DebuggerMachineName>Zysterne</DebuggerMachineName>
     <DebuggerFlavor>UWPRemoteDebugger</DebuggerFlavor>
     <DebuggerLaunchApplication>false</DebuggerLaunchApplication>
   </PropertyGroup>
@@ -19,5 +19,6 @@
     <AppxShowAllApps>False</AppxShowAllApps>
     <AppxBuildConfigurationSelection>arm</AppxBuildConfigurationSelection>
     <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
   </PropertyGroup>
 </Project>
