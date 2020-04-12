@@ -17,8 +17,12 @@
   <PropertyGroup>
     <AppxPackageIsForStore>False</AppxPackageIsForStore>
     <AppxShowAllApps>False</AppxShowAllApps>
-    <AppxBuildConfigurationSelection>arm</AppxBuildConfigurationSelection>
+    <AppxBuildConfigurationSelection>x86|x64|arm</AppxBuildConfigurationSelection>
     <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
     <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebuggerMachineName>UP2Square</DebuggerMachineName>
+    <DebuggerFlavor>UWPRemoteDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
