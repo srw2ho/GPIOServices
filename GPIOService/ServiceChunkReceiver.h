@@ -19,7 +19,17 @@ namespace GPIOService
 
 	class ServiceChunkReceiver: public StreamSocketComm::SocketChunkReceiver
 	{
+		enum ConsumeDataType {
+			Undef,
+			Binary,
+			String,
+			MsgPack
+		};
+
+
 		GPIODriver::GPIOInOut^ m_pGPIOInOut;
+
+		int m_ConsumeDataType;
 
 	public:
 		ServiceChunkReceiver(Windows::Networking::Sockets::StreamSocket^, GPIODriver::GPIOInOut^);
@@ -29,6 +39,11 @@ namespace GPIOService
 	private:
 		virtual void DoProcessChunk(Windows::Storage::Streams::DataReader^ reader);
 		Windows::Storage::Streams::IBuffer^ createBufferfromDataQueue();
+		int DoProcessChunkMsg(Windows::Storage::Streams::DataReader^ reader);
+		int DoProcessStringMsg(Windows::Storage::Streams::DataReader^ reader);
+		int DoProcessPayloadMsg(Windows::Storage::Streams::DataReader^ reader);
+		int DoProcessPayloadMsgPack(Windows::Storage::Streams::DataReader^ reader);
+		int SearchForChunkMsgLen(Windows::Storage::Streams::DataReader^ reader);
 	};
 
 }

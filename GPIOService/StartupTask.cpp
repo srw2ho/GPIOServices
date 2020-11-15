@@ -117,11 +117,26 @@ namespace GPIOService
 				bool bok = true;
 				// Send Data to All Connected Clients
 				// Get States fro all connected GPIO-Pins
-				String^ state = m_pGPIOInOut->GetGPIState();
-				if (state->Length() > 0) {
-					Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromSendData(state);
+				Windows::Storage::Streams::IBuffer^ buf = m_pGPIOInOut->GetGPIStateBuf();
+				if (buf != nullptr) {
 					m_pServiceListener->SendDataToClients(buf);
 				}
+				//if (this->m_pGPIOEventPackageQueue->getUseMpack()) {
+				//	std::vector<char> mpackdata;
+				//	m_pGPIOInOut->GetGPIMsgPackState(mpackdata);
+				//	if (mpackdata.size() > 0) {
+				//		Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromMpackData(mpackdata);
+				//		m_pServiceListener->SendDataToClients(buf);
+				//	}
+				//}
+				//else {
+				//	Platform::String^ state = m_pGPIOInOut->GetGPIState();
+				//	if (state->Length() > 0) {
+				//		Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromSendData(state);
+				//		m_pServiceListener->SendDataToClients(buf);
+				//	}
+				//}
+
 				if (!bok) m_cancelRequested = true;
 			}
 		}
@@ -359,13 +374,23 @@ Concurrency::task<void> StartupTask::doProcessReadValues()
 				m_pGPIOEventPackageQueue->waitForPacket(&pPacket, waitTime);
 				if (pPacket != nullptr)
 				{
-					Platform::String ^ message = pPacket->getEventMsg();
-
-					if (message->Length() > 0) {
-						// Sending to all connected clients
-						Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromSendData(message);
+					Windows::Storage::Streams::IBuffer^ buf = pPacket->getEventBuffer();
+					if (buf != nullptr) {
 						m_pServiceListener->SendDataToClients(buf);
 					}
+	
+					//GPIOPin* pPin = (GPIOPin *)pPacket->getAdditional();
+					//if (pPin != nullptr) {
+
+					//	Platform::String^ message = pPin->GetGPIOPinCmd();
+
+					//	if (message->Length() > 0) {
+					//		// Sending to all connected clients
+					//		Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createPayloadBufferfromSendData(message);
+					//		m_pServiceListener->SendDataToClients(buf);
+					//	}
+					//}
+			
 
 					delete pPacket;
 				}
