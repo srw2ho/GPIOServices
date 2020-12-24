@@ -58,11 +58,11 @@ namespace GPIOService
 					if (wcscmp(arr[1].c_str(), L"UseMPack") == 0) { // Ue Mpack
 						this->m_pGPIOInOut->setUseMpack(true);
 					}
-					std::string command = "GPIOServiceClient.Started";
-					Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createBufferfromSendData(command);
-					m_acceptingData = true;
-					this->SendData(buf);
 				}
+				std::string command = "GPIOServiceClient.Started";
+				Windows::Storage::Streams::IBuffer^ buf = SocketHelpers::createBufferfromSendData(command);
+				m_acceptingData = true;
+				this->SendData(buf);
 			}
 			else
 			if (wcscmp(arr[0].c_str(), L"GPIOServiceClient.Stop") == 0) { // Stop Command
