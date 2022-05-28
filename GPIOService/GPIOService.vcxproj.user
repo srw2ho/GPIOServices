@@ -5,12 +5,12 @@
     <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <DebuggerMachineName>Eingang1</DebuggerMachineName>
+    <DebuggerMachineName>Zysterne</DebuggerMachineName>
     <DebuggerFlavor>UWPRemoteDebugger</DebuggerFlavor>
     <DebuggerLaunchApplication>false</DebuggerLaunchApplication>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <DebuggerMachineName>Eingang1</DebuggerMachineName>
+    <DebuggerMachineName>Zysterne_2</DebuggerMachineName>
     <DebuggerFlavor>UWPRemoteDebugger</DebuggerFlavor>
     <DebuggerLaunchApplication>false</DebuggerLaunchApplication>
   </PropertyGroup>

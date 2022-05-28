@@ -52,7 +52,7 @@ namespace GPIOService
 	//BME280WinIoTWrapper*pGlobBME280WinIoTWrapper = nullptr;
 
 
-	BME280IoTDriverWrapper::BME280IoTDriverWrapper(uint8_t dev_id) : BME280IoTDriver(dev_id)
+	BME280IoTDriverWrapper::BME280IoTDriverWrapper(uint8_t dev_id)// : BME280IoTDriver(dev_id)
 	{
 
 		m_bInitialized = false;
@@ -61,6 +61,7 @@ namespace GPIOService
 		m_I2CError = false;
 		m_i2cController = nullptr;
 		m_ProcessReadingMode = ProcessingReadingModes::Normal;
+		m_pBME280Driver = new BME280Driver::BME280IoTDriver(dev_id);
 		//	m_readFkt = user_i2c_write;
 	}
 
@@ -76,8 +77,34 @@ namespace GPIOService
 
 			delete m_i2cController;
 		}
+
+		if (m_pBME280Driver) {
+			delete m_pBME280Driver;
+		}
 	}
 
+	BME280Driver::BME280IoTDriver* BME280IoTDriverWrapper::getBME280IoTDriver() {
+
+		return m_pBME280Driver;
+	};
+
+	bool BME280IoTDriverWrapper::IsInitialized() {
+		return m_bInitialized; 
+	};
+	void BME280IoTDriverWrapper::SetInitialized(bool isInit) {
+		m_bInitialized = isInit; 
+	};
+	bool BME280IoTDriverWrapper::IsI2CError() { 
+		return m_I2CError; 
+	};
+	void BME280IoTDriverWrapper::setI2CError(bool Error) {
+		m_I2CError = Error; 
+	};
+
+
+	Windows::Devices::I2c::I2cDevice^ BME280IoTDriverWrapper::geti2cDevice() { return m_i2cDevice; };
+	void BME280IoTDriverWrapper::setReadValuesProcessingMode(ProcessingReadingModes mode) { m_ProcessReadingMode = mode; };
+	ProcessingReadingModes BME280IoTDriverWrapper::getReadValuesProcessingMode() { return m_ProcessReadingMode; };
 
 
 	
@@ -85,10 +112,10 @@ namespace GPIOService
 	{
 		int state;
 		if (m_ProcessReadingMode == ProcessingReadingModes::Normal) {
-			state = setNormalModeSettings();
+			state = m_pBME280Driver->setNormalModeSettings();
 		}
 		else	if (m_ProcessReadingMode == ProcessingReadingModes::Force) {
-			state = setForceModeSettings();
+			state = m_pBME280Driver->setForceModeSettings();
 		}
 
 		return state;
@@ -128,7 +155,7 @@ namespace GPIOService
 
 				// 0x40 was determined by looking at the datasheet for the HTU21D sensor
 
-				auto BME280_settings = ref new I2cConnectionSettings(this->getDeviceId());
+				auto BME280_settings = ref new I2cConnectionSettings(this->m_pBME280Driver->getDeviceId());
 
 
 
@@ -215,7 +242,8 @@ namespace GPIOService
 					I2cController ^ cController = ctaskController.get();
 					if (cController != nullptr) {
 						m_i2cController = cController;
-						I2cConnectionSettings^ settings = ref new I2cConnectionSettings(this->getDeviceId());
+						auto devID = this->m_pBME280Driver->getDeviceId();
+						I2cConnectionSettings^ settings = ref new I2cConnectionSettings(int (devID));
 		//				settings->SharingMode = I2cSharingMode::Shared;
 						m_i2cDevice = m_i2cController->GetDevice(settings);
 	//					m_bInitialized = true;

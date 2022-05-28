@@ -15,21 +15,25 @@ using namespace Windows::Foundation;
 using namespace Windows::System::Threading;
 
 
+
+
 namespace GPIOService
 {
 	typedef std::map<int, GPIOService::BME280SensorExternal*> MapBME280SensorExternal;
 
 	MapBME280SensorExternal globMapBME280SensorExternal;
 
+
 	BME280SensorExternal::BME280SensorExternal(GPIOEventPackageQueue* pGPIOEventPackageQueue, int PinNo, double InitPinValue) : BME280Sensor(pGPIOEventPackageQueue,PinNo,InitPinValue) {
 
 		m_pBME280IoTDriverWrapper = nullptr;
+
 	}
 
 	BME280SensorExternal::~BME280SensorExternal()
 	{
 		if (m_pBME280IoTDriverWrapper != nullptr) {
-			globMapBME280SensorExternal.erase(m_pBME280IoTDriverWrapper->getDeviceId());
+			globMapBME280SensorExternal.erase(m_pBME280IoTDriverWrapper->getBME280IoTDriver()->getDeviceId());
 			delete m_pBME280IoTDriverWrapper;
 		}
 
@@ -39,18 +43,19 @@ namespace GPIOService
 		// only one device has Access to I2C-Bus
 		Lock();
 
-		globMapBME280SensorExternal[pDriver->getDeviceId()] = this;
+		auto devId = pDriver->getBME280IoTDriver()->getDeviceId();
+		globMapBME280SensorExternal[devId] = this;
 		m_pBME280IoTDriverWrapper = pDriver;
 
 		int binit = !BME280_OK;
 		bool bIsConnected = pDriver->IsDeviceConnected();
 		if (bIsConnected)
 		{
-		//	pDriver->setReadValuesProcessingMode(getReadValuesProcessingMode());// taking from father-collection
-			pDriver->setReadFkt(BME280SensorExternal::user_i2c_read);		// Read-Callback-Funktion
-			pDriver->setWriteFkt(BME280SensorExternal::user_i2c_write);		// Write-Callback-Funktion
-			pDriver->setDelayFkt(BME280SensorExternal::user_delay_ms);		// Delay- Callback-Funktion
-			binit = pDriver->Initialization();
+		
+			pDriver->getBME280IoTDriver()->setReadFkt(GPIOService::BME280SensorExternal::user_i2c_read);		// Read-Callback-Funktion
+			pDriver->getBME280IoTDriver()->setWriteFkt(GPIOService::BME280SensorExternal::user_i2c_write);		// Write-Callback-Funktion
+			pDriver->getBME280IoTDriver()->setDelayFkt(GPIOService::BME280SensorExternal::user_delay_ms);		// Delay- Callback-Funktion
+			binit = pDriver->getBME280IoTDriver()->Initialization();
 
 			if (binit == BME280_OK)
 			{
@@ -61,8 +66,8 @@ namespace GPIOService
 		if (binit != BME280_OK)
 		{
 			m_pBME280IoTDriverWrapper = nullptr;
-			globMapBME280SensorExternal.erase(pDriver->getDeviceId());
-			delete pDriver;
+			globMapBME280SensorExternal.erase(pDriver->getBME280IoTDriver()->getDeviceId());
+	
 		}
 		else
 		{
@@ -79,6 +84,8 @@ namespace GPIOService
 	{
 		return false;
 	}
+
+	BME280IoTDriverWrapper* BME280SensorExternal::getBME280IoTDriverWrapper() { return m_pBME280IoTDriverWrapper; };
 
 
 	concurrency::task<bool> BME280SensorExternal::InitDriver(unsigned char adress) {
@@ -102,6 +109,10 @@ namespace GPIOService
 				if (ok)
 				{
 					int init = InitDevice(pDriver);
+					if (init != BME280_OK) {
+						delete pDriver;
+					}
+
 					return (init == BME280_OK);
 				}
 				else
@@ -133,17 +144,17 @@ namespace GPIOService
 
 				ProcessingReadingModes mode =  m_pBME280IoTDriverWrapper->getReadValuesProcessingMode();
 				if (mode = ProcessingReadingModes::Normal) {
-					state = m_pBME280IoTDriverWrapper->ReadSensorDataIntoNormalMode();
+					state = m_pBME280IoTDriverWrapper->getBME280IoTDriver()->ReadSensorDataIntoNormalMode();
 				}
 				else
 				{
-					state = m_pBME280IoTDriverWrapper->ReadSensorDataIntoForcedMode();
+					state = m_pBME280IoTDriverWrapper->getBME280IoTDriver()->ReadSensorDataIntoForcedMode();
 				}
 
 				if (state == BME280_OK) {
-					this->m_pressure = m_pBME280IoTDriverWrapper->getPressure();
-					this->m_temperature = m_pBME280IoTDriverWrapper->getTemperature();
-					this->m_humidity = m_pBME280IoTDriverWrapper->getHumidity();
+					this->m_pressure = m_pBME280IoTDriverWrapper->getBME280IoTDriver()->getPressure();
+					this->m_temperature = m_pBME280IoTDriverWrapper->getBME280IoTDriver()->getTemperature();
+					this->m_humidity = m_pBME280IoTDriverWrapper->getBME280IoTDriver()->getHumidity();
 					this->m_PinValue = 1; // Sensor reading O.k.
 				}
 				else
@@ -158,24 +169,15 @@ namespace GPIOService
 		}
 		else this->m_PinValue = -1; // Error
 
-		/*
-		if (m_ProcessReadingMode == ProcessingReadingModes::Normal) {
-			state = pDevice->ReadSensorDataIntoNormalMode();
-		}
-		else	if (m_ProcessReadingMode == ProcessingReadingModes::Force) {
-			state = pDevice->ReadSensorDataIntoForcedMode();
-		}
-		*/
+
 		UnLock();
 		return (state == BME280_OK);
 	}
 	
 
-
-
-	int8_t BME280SensorExternal::user_i2c_read(uint8_t id, uint8_t reg_addr, uint8_t *data, uint16_t len) {
+	int8_t BME280SensorExternal::user_i2c_read(uint8_t id, uint8_t reg_addr, uint8_t* data, uint16_t len) {
 		int8_t ret = -1;
-	//	if (m_pGlobMapBME280SensorExternal != nullptr) 
+		//	if (m_pGlobMapBME280SensorExternal != nullptr) 
 		{
 
 			MapBME280SensorExternal::const_iterator it;
@@ -184,7 +186,7 @@ namespace GPIOService
 
 			if (it != globMapBME280SensorExternal.end())
 			{
-				GPIOService::BME280SensorExternal * pBMEExternal = it->second;
+				GPIOService::BME280SensorExternal* pBMEExternal = it->second;
 
 				GPIOService::BME280IoTDriverWrapper* pi2TDevice = pBMEExternal->getBME280IoTDriverWrapper();
 				if (pi2TDevice != nullptr) {
@@ -228,7 +230,7 @@ namespace GPIOService
 		return ret;
 	}
 
-	int8_t BME280SensorExternal::user_i2c_write(uint8_t id, uint8_t reg_addr, uint8_t *data, uint16_t len)
+	int8_t BME280SensorExternal::user_i2c_write(uint8_t id, uint8_t reg_addr, uint8_t* data, uint16_t len)
 	{
 
 		int8_t ret = -1;
@@ -243,7 +245,7 @@ namespace GPIOService
 
 			if (it != globMapBME280SensorExternal.end())
 			{
-				GPIOService::BME280SensorExternal * pBMEExternal = it->second;
+				GPIOService::BME280SensorExternal* pBMEExternal = it->second;
 
 				GPIOService::BME280IoTDriverWrapper* pi2TDevice = pBMEExternal->getBME280IoTDriverWrapper();
 
@@ -302,6 +304,10 @@ namespace GPIOService
 		//usleep(period * 1000);
 		Sleep(period);// Sleep in ms
 	}
+
+
+
+
 
 
 

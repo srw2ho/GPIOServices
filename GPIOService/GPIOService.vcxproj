@@ -176,7 +176,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PreprocessorDefinitions>MPACK_VARIANT_BUILDS;MPACK_STDIO=0;GPIOCLIENT_USING=0;MPACK_VARIANT_BUILDS;_WINRT_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
@@ -185,6 +185,7 @@
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);../../SharedSources/BME280Driver</AdditionalIncludeDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -268,12 +269,12 @@
     <ClCompile Include="StartupTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="GPIOService.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\SharedSources\BME280Driver\BME280Driver.vcxproj">
       <Project>{c9aae3ed-3beb-448d-a2ad-a15311754108}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="GPIOService.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
